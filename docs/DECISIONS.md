@@ -1,0 +1,35 @@
+# Decisions and risk register
+
+Status as of 2026-11-23. The repository baseline contained a GPL version 3 license text and IDE metadata, with no application or Gradle modules. Preserve the license; upstream models, data, fonts and native components retain their respective terms. The records below are implementation decisions. Hardware qualification is a separate activity.
+
+| ADR | Decision and rationale | Consequence / revisit trigger |
+|---|---|---|
+| 01 · Product boundary | Single local adult profile, no accounts, no telemetry, no network permission, no Play/Firebase dependencies. SAF restricted to system local volumes. | Additional profiles, cloud transfer or Health Connect require a separate product decision. User-managed exports are the portability mechanism. |
+| 02 · Modularity | Four modules with JVM rules, Android persistence, isolated inference and Compose app composition. Constructor injection, MVVM/UDF, Flow and typed Navigation 3. | Avoid per-screen Gradle projects and a DI compiler. Revisit only with a demonstrated ownership/build problem. |
+| 03 · Source of truth | Room records every setting with quantitative consequences. DataStore holds UI-only preferences. Immutable food/workout snapshots and effective policy dates preserve history. | Replay uses stable versions. A new calculation requires migration fixtures and a rule/version decision. |
+| 04 · Rewards | Weekly capped habit-day credits, configurable recovery, no weight/calorie outcome points, confirmed fixed wish targets, user-recorded cash independent of XP. | Historic corrections may change unclaimed progress. Claim receipts remain durable and explainable. See [rules](GAMIFICATION.md). |
+| 05 · Text backend | Qualify llama.cpp CPU with Qwen2.5-0.5B-Instruct Q4_K_M first. Restricted natural-language intent/response selection, deterministic rendering. Templates always available. | Benchmark larger Qwen only for quality; standalone LiteRT-LM/Gemma if runtime unsuitable. No advertised support before [device gates](AI_FEASIBILITY.md). |
+| 06 · Accelerator policy | CPU is the production baseline candidate. No reliance on AICore, NNAPI, TPU or a GPU driver. No network model provisioning. | GPU can graduate per OS/model only with repeatable benefits, compatible license and tested CPU recovery. Tensor G3 capability is unverified. |
+| 07 · Nutrition | Separate recognition, catalog resolution, portion review and deterministic nutrient math. Individual foods/recipes, optional user estimates, unknown fields retained. | Dedicated LiteRT CPU classification is first candidate. Multimodal/detection need better measured coverage than a simple crop flow. |
+| 08 · Catalog rights | Bundle pinned USDA CC0 seed. Separate build-time processed optional regional OFF catalog with ODbL/DbCL notices, no product images. Hash-pinned model imports. | Distribution is blocked for a pack without reviewed provenance/rights. The personal journal and bundled manual foods work independently. |
+| 09 · Durability | Versioned logical backups, default passphrase-encrypted, explicit plaintext alternative. Atomic replace after local validation. No Android auto backup or unattended external copies. | Restore is replace-only. Cross-device merge would need conflict semantics and a new decision. |
+| 10 · Device and UI | Pixel 8 first, API 31+, stable Material 3 Expressive components, dynamic color, five destinations, rail/pane at larger widths, reduced-motion parity. | Hardware gates apply to base Pixel 8 with GrapheneOS. Other devices may run the deterministic app; no performance promise. |
+| 11 · Execution | Foreground-only camera, import and inference, OS lifecycle cancellation, private isolated inference process. No scheduled background work for v1. | Introduce WorkManager only for an identified deferrable task with reviewed scheduling, manifest and privacy effects. |
+| 12 · Release evidence | Freeze dependency graph, toolchain, native revisions and public data inputs. Compare unsigned artifacts from independent workspaces, sign separately. | An unexplained hash difference blocks a reproducibility claim. Debug builds or matching source trees alone are insufficient. |
+
+## Open risks and resolution owners
+
+| Risk | Owner / decision point | Experiment, failure outcome |
+|---|---|---|
+| GrapheneOS native loading, isolated descriptor/mmap access, ABI/page-size alignment, hardened allocator | Android/native implementer, M6 spike before integration | Load known file on release OS with normal security settings, close/reopen, cancel under pressure. A reproducible crash disables the digest. Compare standalone LiteRT-LM CPU or ship templates. |
+| Small text model misroutes natural language or costs more battery than the benefit warrants | Coach implementer, M6 | Paired no-model vs model corpus with real device power/thermal/latency data. Enforce accuracy floor and deterministic final output. |
+| Dynamic memory exceeds budget across camera, model, KV cache and UI | Runtime implementer, M6/M7 | One active heavy model at a time; close camera before interpretation, unload text for vision. Fail closed on memory pressure and preserve draft. |
+| Locale/cuisine bias or OCR unit errors | Nutrition implementer, M7 | Stratified crop/unknown evaluation and bilingual mixed-basis labels. Disable highlighting/OCR pathway if gates fail; retain correction and manual lookup. |
+| Catalog region coverage, upstream schema drift and redistribution obligations | Catalog/release implementer, M2/M4 | Validate pinned inputs, review license/notice and per-basis sample records; reject new pack atomically. Old catalog and snapshots remain usable. |
+| SAF providers, low storage and interrupted export | Data implementer, M4 | Test local removable volume removal, missing provider, full disk and partial document. Surface failure, keep journal/previous version and allow retry. |
+| Large history makes replay or restore slow | Data implementer, M3/M8 | Measure five-year fixture; optimize affected weeks, preserving full replay equivalence. Restore may take longer but must remain cancelable before commit. |
+| Vendor differences in backup/transfer and OS upgrades | Release implementer, M4/M8 | Inspect exclusions and execute local transfer/clean-install tests. Document the tested OS fingerprint; rerun after platform changes. |
+| Stable expressive API availability or layout regressions | UI implementer, M0/M8 | Verify pinned artifacts and screenshots. Use stable equivalents with the same role/semantics. |
+| Rights to optional artifacts or incompatibility with GPL distribution | Release maintainer, before shipping each dependency/pack | Inventory exact SPDX/source, notices and modification obligations, include corresponding source when required. Withhold unreviewed assets; import never waives applicable terms. |
+
+Outstanding values such as actual tokens/s, peak PSS, energy per answer, measured classifier accuracy and distributable model SHA-256 belong in qualification records after running the spikes. The capability and fallback interfaces are fixed so those measurements can change the adapter selection without changing journal semantics.

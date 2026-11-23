@@ -1,0 +1,12 @@
+# Implementing E‑Trainer
+
+Start with [the milestone sequence](docs/ROADMAP.md). Implement the first incomplete dependency-ready milestone in the scope assigned by the user. The repository starts with architecture documents and a GPLv3 license. Create the Gradle projects at M0. Preserve existing user work.
+
+- Use [Architecture](docs/ARCHITECTURE.md) for module edges, build configuration, process boundaries and archive protocol. Put Android-free calculations in :domain. Keep Room and model handles out of Compose. Use constructor injection and the standard journal command path.
+- Follow [Product](docs/PRODUCT.md) and [Design system](docs/DESIGN_SYSTEM.md) for journeys, navigation, accessibility, motion and empty/error states. Core logging, wishes and evidence-based coaching must work at first launch offline.
+- Use [Data model](docs/DATA_MODEL.md) and [Gamification](docs/GAMIFICATION.md) as the authority for units, nullable nutrients, snapshots, calendar boundaries, eligibility, forecasts and corrections. Commit Room schema exports and migration tests. Never replace user data to recover from a schema error.
+- Implement the ports and closed schemas in [AI coach](docs/AI_COACH.md). All numbers come from domain calculations. Every model is optional, local, cancelable and unable to query or write the journal. Always ask the user to review edits through a normal form.
+- Respect the release privacy boundary: no INTERNET permission, Google Play Services, Firebase, analytics, remote inference, ads or network font/model loading. Restrict SAF transfers to validated local storage. Review the final merged manifest and dependency graph when adding libraries.
+- Qualify models on the actual base Pixel 8 with GrapheneOS and no Play packages. Pin runtime revision, artifact digest and license; record measurements against [AI feasibility](docs/AI_FEASIBILITY.md). Unverified configurations use templates or manual entry.
+- Follow [Test strategy](docs/TEST_STRATEGY.md). Once M0 exists, run `./gradlew :domain:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`; run `./gradlew connectedDebugAndroidTest` with a configured device, plus the milestone-specific gates. Run release privacy/hash checks on release artifacts. Report commands, results and any open device gates.
+- Keep scope to the current milestone. Record necessary architecture changes with rationale and affected contracts in [Decisions](docs/DECISIONS.md), updating linked rules/tests together. Do not treat a deferred or unmeasured feature as qualified.
